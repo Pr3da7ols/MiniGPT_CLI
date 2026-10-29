@@ -1,46 +1,43 @@
-#!/data/data/com.termux/files/usr/bin/bash
+#!/usr/bin/env bash
 set -euo pipefail
 
 OWNER="Pr3da7ols"
 REPO="MiniGPT_CLI"
 BRANCH="main"
-REPO_URL="https://github.com/${OWNER}/${REPO}.git"
-INSTALL_DIR="$HOME/MiniGPT_CLI"
-VENV_DIR="$HOME/.venvs/minigpt"
+PACKAGE="NexoIA-MiniGPT-Obfuscated-3.14.zip"
+PACKAGE_URL="https://raw.githubusercontent.com/${OWNER}/${REPO}/${BRANCH}/${PACKAGE}"
+INSTALL_DIR="${MINIGPT_OBFUSCATED_DIR:-$HOME/MiniGPT_CLI-Obfuscated-3.14}"
 
 if ! command -v pkg >/dev/null 2>&1; then
-    echo "Este instalador está preparado para Termux." >&2
+    echo "Este instalador automático está preparado para Termux." >&2
+    echo "En PC: extrae el ZIP y ejecuta install-remote.ps1 (Windows) o install-remote.sh (Linux/macOS)." >&2
     exit 2
 fi
 
-pkg update -y
-pkg install -y git python
-
-if [ -d "$INSTALL_DIR/.git" ]; then
-    git -C "$INSTALL_DIR" pull --ff-only
-elif [ -f "$INSTALL_DIR/pyproject.toml" ]; then
-    echo "Usaré el código MiniGPT que ya está en $INSTALL_DIR."
-elif [ -e "$INSTALL_DIR" ]; then
-    echo "Ya existe $INSTALL_DIR y no parece un repo MiniGPT; muévelo o cambia INSTALL_DIR." >&2
+if [ -e "$INSTALL_DIR" ]; then
+    echo "Ya existe $INSTALL_DIR. Para otra instalación, define MINIGPT_OBFUSCATED_DIR con una ruta nueva." >&2
     exit 2
-else
-    git clone --branch "$BRANCH" "$REPO_URL" "$INSTALL_DIR"
 fi
 
-python -m venv "$VENV_DIR"
-# shellcheck disable=SC1091
-. "$VENV_DIR/bin/activate"
-python -m pip install --upgrade pip
-cd "$INSTALL_DIR"
-python -m pip install -e '.[terminal]'
-
-mkdir -p "$HOME/.mini_gpt"
-if [ ! -f "$HOME/.mini_gpt/.env" ] && [ -f "$INSTALL_DIR/mini_gpt/.env.example" ]; then
-    cp "$INSTALL_DIR/mini_gpt/.env.example" "$HOME/.mini_gpt/.env"
-    chmod 600 "$HOME/.mini_gpt/.env"
+pkg install -y python unzip
+if ! python3 -c 'import sys; raise SystemExit(0 if sys.version_info[:2] == (3, 14) else 1)'; then
+    echo "La distribución requiere CPython 3.14.x." >&2
+    exit 2
 fi
 
-printf '\nMiniGPT CLI quedó instalado en %s\n' "$VENV_DIR"
-printf 'Comando: %s/bin/mini-gpt\n' "$VENV_DIR"
-printf 'Configura el relay en: %s/.mini_gpt/.env\n' "$HOME"
-printf 'No subas ese .env a GitHub.\n'
+INSTALL_TMP="$(mktemp -d "${TMPDIR:-$HOME}/nexoia-obfuscated.XXXXXX")"
+cleanup() { rm -rf "$INSTALL_TMP"; }
+trap cleanup EXIT INT TERM
+
+curl -fsSL --retry 3 "$PACKAGE_URL" -o "$INSTALL_TMP/package.zip"
+unzip -tq "$INSTALL_TMP/package.zip"
+mkdir "$INSTALL_TMP/extracted"
+unzip -q "$INSTALL_TMP/package.zip" -d "$INSTALL_TMP/extracted"
+if [ ! -f "$INSTALL_TMP/extracted/pyproject.toml" ] || [ ! -f "$INSTALL_TMP/extracted/install.sh" ]; then
+    echo "El ZIP descargado no contiene el paquete esperado." >&2
+    exit 2
+fi
+
+mkdir -p "$(dirname -- "$INSTALL_DIR")"
+mv "$INSTALL_TMP/extracted" "$INSTALL_DIR"
+bash "$INSTALL_DIR/install.sh"
