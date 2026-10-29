@@ -10,12 +10,12 @@ El instalador configura el CLI. Para obtener respuestas de tu IA, también neces
 
 ## Instalar en Termux
 
-Sube el contenido de este proyecto a un repositorio de GitHub llamado `MiniGPT_CLI`. Antes de publicarlo, abre `install.sh` y cambia `OWNER="OWNER"` por tu nombre de usuario de GitHub.
+El instalador está preparado para el repositorio [Pr3da7ols/MiniGPT_CLI](https://github.com/Pr3da7ols/MiniGPT_CLI).
 
-En Termux, ejecuta este comando y reemplaza `TU_USUARIO` por el mismo nombre:
+En Termux, ejecuta:
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/TU_USUARIO/MiniGPT_CLI/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/Pr3da7ols/MiniGPT_CLI/main/install.sh | bash
 ```
 
 Si Termux no reconoce `curl`, instálalo primero:
@@ -95,7 +95,7 @@ Vuelve a ejecutar el mismo comando de instalación. Si el repositorio ya está c
 
 - **No conecta con el relay:** revisa `MINIGPT_RELAY_URL`, `MINIGPT_RELAY_TOKEN` y que el relay esté en línea.
 - **No aparece `mini-gpt`:** cierra y vuelve a abrir Termux, o activa el entorno con `source ~/.venvs/minigpt/bin/activate`.
-- **Error al instalar desde GitHub:** comprueba que el repositorio sea público, que el nombre sea `MiniGPT_CLI`, que la rama sea `main` y que `OWNER` en `install.sh` coincida con tu usuario.
+- **Error al instalar desde GitHub:** comprueba que el repositorio sea público, que el nombre sea `MiniGPT_CLI` y que la rama sea `main`.
 - **No compartas** `~/.mini_gpt/.env`, `~/.mini_gpt/api_key` ni tu token del relay.
 
 ## Archivos principales

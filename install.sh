@@ -1,17 +1,12 @@
 #!/data/data/com.termux/files/usr/bin/bash
 set -euo pipefail
 
-OWNER="OWNER"
+OWNER="Pr3da7ols"
 REPO="MiniGPT_CLI"
 BRANCH="main"
 REPO_URL="https://github.com/${OWNER}/${REPO}.git"
 INSTALL_DIR="$HOME/MiniGPT_CLI"
 VENV_DIR="$HOME/.venvs/minigpt"
-
-if [ "$OWNER" = "OWNER" ]; then
-    echo "Edita install.sh y cambia OWNER por tu usuario de GitHub antes de publicarlo." >&2
-    exit 2
-fi
 
 if ! command -v pkg >/dev/null 2>&1; then
     echo "Este instalador está preparado para Termux." >&2
